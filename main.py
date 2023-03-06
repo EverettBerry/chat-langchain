@@ -1,6 +1,7 @@
 """Main entrypoint for the app."""
 import logging
 import pickle
+import faiss
 from pathlib import Path
 from typing import Optional
 
@@ -24,7 +25,10 @@ async def startup_event():
         raise ValueError("vectorstore.pkl does not exist, please run ingest.py first")
     with open("vectorstore.pkl", "rb") as f:
         global vectorstore
+        index = faiss.read_index("awsdocs.index")
+
         vectorstore = pickle.load(f)
+        vectorstore.index = index
 
 
 @app.get("/")
